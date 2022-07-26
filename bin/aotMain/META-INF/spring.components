@@ -1,0 +1,6 @@
+#
+#Tue Jul 26 12:45:59 CEST 2022
+com.db.awmd.challenge.DevChallengeApplication=org.springframework.stereotype.Component,org.springframework.boot.SpringBootConfiguration
+com.db.awmd.challenge.repository.AccountsRepositoryInMemory=org.springframework.stereotype.Component
+com.db.awmd.challenge.web.AccountsController=org.springframework.stereotype.Component
+com.db.awmd.challenge.service.AccountsService=org.springframework.stereotype.Component
