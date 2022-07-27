@@ -51,4 +51,15 @@ public class AccountsController {
     return this.accountsService.getAccount(accountId);
   }
 
-}
+  @PostMapping(path= "/transaction", consumes = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Object> createTransaction(@RequestBody @Valid Transaction transaction) {
+    log.info("Creating transaction {}", transaction);
+
+    try {
+      this.accountsService.createTransaction(transaction);
+    } catch (Exception e) {
+      return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+    return new ResponseEntity<>(HttpStatus.CREATED);
+  }
+  }

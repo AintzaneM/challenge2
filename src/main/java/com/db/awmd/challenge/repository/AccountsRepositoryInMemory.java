@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 public class AccountsRepositoryInMemory implements AccountsRepository {
 
   private final Map<String, Account> accounts = new ConcurrentHashMap<>();
+  private final Map<String, Transaction> transactions = new ConcurrentHashMap<>();
 
   @Override
   public void createAccount(Account account) throws DuplicateAccountIdException {
@@ -34,7 +35,12 @@ public class AccountsRepositoryInMemory implements AccountsRepository {
   }
 
   @Override
-  public void createTransaction(Transaction transaction) {
+  public void createTransaction(Transaction transaction) throws Exception {
+    Transaction previousTransaction = transactions.putIfAbsent(transaction.getTransactionId() , transaction);
+    if (previousTransaction != null) {
+      throw new Exception (
+              "Transaction id " + transaction.getTransactionId() + " already exists!");
+    }
 
   }
 

@@ -14,7 +14,7 @@ public interface AccountsRepository {
 
   void clearAccounts();
 
-  void createTransaction(Transaction transaction);
+  void createTransaction(Transaction transaction) throws Exception;
 }
 
 

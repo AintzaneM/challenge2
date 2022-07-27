@@ -28,7 +28,7 @@ public class AccountsService {
     return this.accountsRepository.getAccount(accountId);
   }
 
-  public void createTransaction(Transaction transaction) {
+  public void createTransaction(Transaction transaction) throws Exception {
     this.accountsRepository.createTransaction(transaction);
 
   }
