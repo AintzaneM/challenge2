@@ -2,11 +2,13 @@ package com.db.awmd.challenge.web;
 
 import com.db.awmd.challenge.domain.Account;
 import com.db.awmd.challenge.domain.Transaction;
+import com.db.awmd.challenge.exception.AmountTransactionException;
 import com.db.awmd.challenge.exception.DuplicateAccountIdException;
 import com.db.awmd.challenge.service.AccountsService;
 import javax.validation.Valid;
+
+import com.db.awmd.challenge.service.NotificationService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
-
 @RestController
 @RequestMapping("/v1/accounts")
 @Slf4j
@@ -27,21 +27,22 @@ public class AccountsController {
 
   private final AccountsService accountsService;
 
-  @Autowired
-  public AccountsController(AccountsService accountsService) {
+  private  NotificationService notificationService;
+
+  public AccountsController(AccountsService accountsService,  @Autowired NotificationService notificationService ) {
     this.accountsService = accountsService;
+    this.notificationService= notificationService;
   }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> createAccount(@RequestBody @Valid Account account) {
-    log.info("Creating account {}", account);
 
+    log.info("Creating {}", account);
     try {
-    this.accountsService.createAccount(account);
+      this.accountsService.createAccount(account);
     } catch (DuplicateAccountIdException daie) {
       return new ResponseEntity<>(daie.getMessage(), HttpStatus.BAD_REQUEST);
     }
-
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
@@ -53,13 +54,18 @@ public class AccountsController {
 
   @PostMapping(path= "/transaction", consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> createTransaction(@RequestBody @Valid Transaction transaction) {
-    log.info("Creating transaction {}", transaction);
+    log.info("Creating {} ", transaction);
 
-    try {
-      this.accountsService.createTransaction(transaction);
-    } catch (Exception e) {
-      return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+      try {
+        this.accountsService.createTransaction(transaction);
+
+      } catch (AmountTransactionException ate) {
+      return new ResponseEntity<>(ate.getMessage(), HttpStatus.BAD_REQUEST);
+      }
+
+      return new ResponseEntity<>(HttpStatus.CREATED);
     }
-    return new ResponseEntity<>(HttpStatus.CREATED);
   }
-  }
+
+
+

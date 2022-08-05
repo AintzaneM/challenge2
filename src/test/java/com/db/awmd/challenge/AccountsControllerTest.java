@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 import com.db.awmd.challenge.domain.Account;
+import com.db.awmd.challenge.domain.Transaction;
 import com.db.awmd.challenge.service.AccountsService;
 import java.math.BigDecimal;
 import org.junit.Before;
@@ -101,4 +102,27 @@ public class AccountsControllerTest {
       .andExpect(
         content().string("{\"accountId\":\"" + uniqueAccountId + "\",\"balance\":123.45}"));
   }
-}
+
+
+  @Test
+  public void createTransaction() throws Exception {
+
+    String accountFromId = "Id-123";
+    String accountToId = "Id-1234";
+    Account accountFrom = new Account(accountFromId, new BigDecimal("40"));
+    this.accountsService.createAccount(accountFrom);
+    Account accountTo = new Account(accountToId, new BigDecimal("20"));
+    this.accountsService.createAccount(accountTo);
+
+
+    this.mockMvc.perform(post("/v1/accounts/transaction").contentType(MediaType.APPLICATION_JSON)
+            .content("{\"transactionId\":\"Id-1\",\"amount\":20 ,\"accountFrom\":\"Id-123\",\"accountTo\": \"Id-1234\"}")).andExpect(status().isCreated());
+
+  }
+
+  }
+
+
+
+
+
